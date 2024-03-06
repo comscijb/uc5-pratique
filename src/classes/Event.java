@@ -1,6 +1,8 @@
-package model;
+package src.model;
+import java.io.Serializable;
 
-class Event {
+class Event implements Serializable {
+    private static final long serialVersionUID = 1L;
     private String name;
     private String category;
     private String date;

@@ -1,19 +1,22 @@
-package src.model;
+package src.classes;
+import java.io.Serializable;
+import java.time.LocalDateTime;
 
-class User {
+class User implements Serializable{
+    private static final long serialVersionUID = 1L;
     private String firstName;
     private String surName;
-    private String cPF;
+    private String document;
     private String phoneNumber;
     private String email;
     private String address;
     private String birthDate;
 
-    public User(String firstName, String surName, String cPF, String phoneNumber, String email, String address,
+    public User(String firstName, String surName, String document, String phoneNumber, String email, String address,
             String birthDate) {
         this.firstName = firstName;
         this.surName = surName;
-        this.cPF = cPF;
+        this.document = document;
         this.phoneNumber = phoneNumber;
         this.email = email;
         this.address = address;
@@ -25,8 +28,8 @@ class User {
     public String getSurName() {
         return this.surName;
     }
-    public String getCPF() {
-        return this.cPF;
+    public String getDocument() {
+        return this.document;
     }
     public String getPhoneNumber() {
         return this.phoneNumber;
@@ -46,8 +49,8 @@ class User {
     public void setSurName(String surName) {
         this.surName = surName;
     }
-    public void setCPF(String cPF) {
-        this.cPF = cPF;
+    public void setDocument(String document) {
+        this.document = document;
     }
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
@@ -60,5 +63,17 @@ class User {
     }
     public void setBirthDate(String birthDate) {
         this.birthDate = birthDate;
+    }
+    public void buyTicket(Ticket ticket, User user) {
+        ticket.sellTicket(user);
+    }
+    public void userRefundTicket(Ticket ticket, User user) {
+        ticket.refundTicket(user, ticket);
+    }
+    public void createEventAlert(Event event) {
+        String eventDate = event.getDate();
+        String eventHour = event.getTime();
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        
     }
 }
