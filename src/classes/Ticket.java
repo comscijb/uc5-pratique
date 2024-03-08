@@ -1,9 +1,7 @@
 package src.classes;
-import java.io.Serializable;
 import java.util.logging.Logger;
 
-public class Ticket implements Serializable {
-    private static final long serialVersionUID = 1L;
+public class Ticket {
     private String type;
     private String event;
     private int batch;

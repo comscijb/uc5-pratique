@@ -1,26 +1,27 @@
 package src.classes;
-import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.logging.Logger;
 
-class User implements Serializable{
-    private static final long serialVersionUID = 1L;
+class User{
     private String firstName;
     private String surName;
     private String document;
     private String phoneNumber;
-    private String email;
-    private String address;
-    private String birthDate;
+    private String email = "";
+    private String address = "";
+    private LocalDate birthDate;
 
-    public User(String firstName, String surName, String document, String phoneNumber, String email, String address,
-            String birthDate) {
+    public User(String firstName, String surName, String document, String phoneNumber,
+     LocalDate birthDate, String email, String address) {
         this.firstName = firstName;
         this.surName = surName;
         this.document = document;
         this.phoneNumber = phoneNumber;
+        this.birthDate = birthDate;
         this.email = email;
         this.address = address;
-        this.birthDate = birthDate;
     }
     public String getFirstName() {
         return this.firstName;
@@ -40,7 +41,7 @@ class User implements Serializable{
     public String getAddress() {
         return this.address;
     }
-    public String getBirthDate() {
+    public LocalDate getBirthDate() {
         return this.birthDate;
     }
     public void setFirstName(String firstName) {
@@ -61,19 +62,26 @@ class User implements Serializable{
     public void setAddress(String address) {
         this.address = address;
     }
-    public void setBirthDate(String birthDate) {
+    public void setBirthDate(LocalDate birthDate) {
         this.birthDate = birthDate;
     }
     public void buyTicket(Ticket ticket, User user) {
         ticket.sellTicket(user);
+        // chamar funçao para salvar no bd
     }
     public void userRefundTicket(Ticket ticket, User user) {
         ticket.refundTicket(user, ticket);
+        // chamar funçao para excluir do bd
     }
     public void createEventAlert(Event event) {
-        String eventDate = event.getDate();
-        String eventHour = event.getTime();
+        LocalDate eventDate = event.getDate();
+        LocalTime eventHour = event.getTime();
+        LocalDateTime eventDateTime = LocalDateTime.of(eventDate, eventHour);
         LocalDateTime currentDateTime = LocalDateTime.now();
-        
+        if (eventDateTime.isBefore(currentDateTime)) {
+
+            Logger logger = Logger.getLogger(getClass().getName());
+            logger.info("Alerta criado com sucesso!");
+        }
     }
 }

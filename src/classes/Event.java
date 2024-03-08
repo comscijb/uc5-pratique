@@ -1,18 +1,18 @@
-package src.model;
-import java.io.Serializable;
+package src.classes;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
-class Event implements Serializable {
-    private static final long serialVersionUID = 1L;
+class Event {
     private String name;
     private String category;
-    private String date;
-    private String time;
+    private LocalDate date;
+    private LocalTime time;
     private String description;
     private String address;
     private Boolean isOngoing = false;
     private Boolean isFinished;
     
-    public Event(String name, String category, String date, String time, String description, String address,
+    public Event(String name, String category, LocalDate date, LocalTime time, String description, String address,
             Boolean isFinished) {
         this.name = name;
         this.category = category;
@@ -28,10 +28,10 @@ class Event implements Serializable {
     public String getCategory() {
         return this.category;
     }
-    public String getDate() {
+    public LocalDate getDate() {
         return this.date;
     }
-    public String getTime() {
+    public LocalTime getTime() {
         return this.time;
     }
     public String getDescription() {
@@ -60,10 +60,10 @@ class Event implements Serializable {
     public void setCategory(String category) {
         this.category = category;
     }
-    public void setDate(String date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
-    public void setTime(String time) {
+    public void setTime(LocalTime time) {
         this.time = time;
     }
     public void setDescription(String description) {
