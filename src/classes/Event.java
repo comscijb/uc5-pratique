@@ -4,29 +4,33 @@ import java.time.LocalTime;
 
 class Event {
     private String name;
+    private int eventID;
     private String category;
     private LocalDate date;
     private LocalTime time;
     private String description;
     private String address;
     private Boolean isOngoing = false;
-    private Boolean isFinished;
+    private Boolean isFinished = false;
+    private static int nextID = 1;
     
-    public Event(String name, String category, LocalDate date, LocalTime time, String description, String address,
-            Boolean isFinished) {
+    public Event(String name, String category, LocalDate date, LocalTime time, String description, String address) {
         this.name = name;
         this.category = category;
         this.date = date;
         this.time = time;
         this.description = description;
         this.address = address;
-        this.isFinished = isFinished;
+        this.eventID = nextID++;
     }
     public String getName() {
         return this.name;
     }
     public String getCategory() {
         return this.category;
+    }
+    public int getEventID() {
+        return this.eventID;
     }
     public LocalDate getDate() {
         return this.date;

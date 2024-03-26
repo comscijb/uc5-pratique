@@ -78,7 +78,7 @@ class User{
         LocalTime eventHour = event.getTime();
         LocalDateTime eventDateTime = LocalDateTime.of(eventDate, eventHour);
         LocalDateTime currentDateTime = LocalDateTime.now();
-        if (eventDateTime.isBefore(currentDateTime)) {
+        if (currentDateTime.isBefore(eventDateTime)) {
 
             Logger logger = Logger.getLogger(getClass().getName());
             logger.info("Alerta criado com sucesso!");

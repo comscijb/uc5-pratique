@@ -5,7 +5,6 @@ public class Ticket {
     private String type;
     private String event;
     private int batch;
-    private String clientDocument = "";
     private Boolean isAvailable = true;
     private double price;
     private int quantity;
@@ -34,9 +33,6 @@ public class Ticket {
     public int getBatch() {
         return this.batch;
     }
-    public String getClientDocument() {
-        return this.clientDocument;
-    }
     public Boolean getIsAvailable() {
         return this.isAvailable;
     }
@@ -61,9 +57,6 @@ public class Ticket {
     public void setBatch(int batch) {
         this.batch = batch;
     }
-    public void setClientDocument(String clientDocument) {
-        this.clientDocument = clientDocument;
-    }
     public void setIsAvailable(Boolean isAvailable) {
         this.isAvailable = isAvailable;
     }
@@ -81,11 +74,13 @@ public class Ticket {
     }
     public Ticket sellTicket(User user) {
         if (this.quantity > 0 && this.isAvailable) {
-            this.clientDocument = user.getDocument();
+            String userDocument = user.getDocument();
             this.quantity--;
             if (this.quantity == 0) {
                 changeBatch(batch);
             }
+            SoldTicket soldTicket = new SoldTicket(this, userDocument);
+            // criar função para salvar no bd
         }
         return this;
     }
