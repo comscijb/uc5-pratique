@@ -1,4 +1,4 @@
-package src.classes;
+package src.appclasses;
 import java.time.LocalDateTime;
 
 public class Alert {

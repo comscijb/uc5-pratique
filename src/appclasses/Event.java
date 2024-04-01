@@ -1,4 +1,5 @@
-package src.classes;
+package src.appClasses;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 
