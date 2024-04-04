@@ -84,6 +84,7 @@ class User{
         catch(Exception e){
             Logger logger = Logger.getLogger(User.class.getName());
             logger.info(e.getMessage());
+            logger.info("\nErro ao cadastrar usuario, por favor, tente novamente.\n");
             createUser();
             return null;
         }

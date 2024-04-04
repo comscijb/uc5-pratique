@@ -3,10 +3,10 @@ import java.util.logging.Logger;
 
 public class UserInterface {
     public static void main(String[] args) {
-        mainLoop();
+        mainMenu();
     }
 
-    public static void mainLoop() {
+    public static void mainMenu() {
         Logger logger = Logger.getLogger(UserInterface.class.getName());
         int option = 1;
 
@@ -20,27 +20,32 @@ public class UserInterface {
                 logger.info("\nOpção inválida, tente novamente!");
             }
             else if (option == 1) {
-                int userOption = 1;
-                logger.info("\nVoce esta no menu usuario, selecione uma opção abaixo:\n");
-
-                while (userOption != 0){
-                    logger.info("\n1 - Cadastrar novo usuario\n2 - Listar usuários\n3 - Buscar usuario\n4 - Atualizar usuario\n5 - Deletar usuario\n0 - Sair\n");
-                    userOption = Integer.parseInt(System.console().readLine());
-
-                    if (userOption != 0 && userOption != 1 && userOption != 2 && userOption != 3 && userOption != 4 && userOption != 5) {
-                        logger.info("\nOpção inválida, tente novamente!");
-                    }
-                    else if (userOption == 1){
-                        User.createUser();
-                    }
-                    else if (userOption == 0) {
-                        logger.info("\nRetornando ao menu principal.");
-                    }
-                }
+                userMenu();
             }
             else if (option == 0){{
                 logger.info("\nCerto, programa encerrando...");
             }}
+        }
+    }
+    public static void userMenu(){
+        int userOption = 1;
+        Logger logger = Logger.getLogger(UserInterface.class.getName());
+        logger.info("\nVoce esta no menu usuario, selecione uma opção abaixo:\n");
+
+        while (userOption != 0){
+            logger.info("\n1 - Cadastrar novo usuario\n2 - Listar usuários\n3 - Buscar usuario\n4 - Atualizar usuario\n5 - Deletar usuario\n0 - Sair\n");
+            userOption = Integer.parseInt(System.console().readLine());
+
+            if (userOption != 0 && userOption != 1 && userOption != 2 && userOption != 3 && userOption != 4 && userOption != 5) {
+                logger.info("\nOpção inválida, tente novamente!");
+            }
+            else if (userOption == 1){
+                User.createUser();
+            }
+            else if (userOption == 0) {
+                logger.info("\nRetornando ao menu principal.");
+                mainMenu();
+            }
         }
     }
 }
