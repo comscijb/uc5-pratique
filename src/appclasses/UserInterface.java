@@ -40,7 +40,8 @@ public class UserInterface {
                 logger.info("\nOpção inválida, tente novamente!");
             }
             else if (userOption == 1){
-                User.createUser();
+                User newUser = User.createUser();
+                DataBase.insertUser(newUser);                
             }
             else if (userOption == 0) {
                 logger.info("\nRetornando ao menu principal.");
