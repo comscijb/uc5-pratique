@@ -1,4 +1,4 @@
-package src.appclasses;
+package src.classes;
 
 import java.time.LocalDate;
 import java.util.logging.Logger;
@@ -8,17 +8,17 @@ class User{
     private String document;
     private String phoneNumber;
     private String email = "";
-    private String address = "";
+    private String city = "";
     private LocalDate birthDate;
 
     public User(String name, String document, String phoneNumber,
-     LocalDate birthDate, String email, String address) {
+     LocalDate birthDate, String email, String city) {
         this.name = name;
         this.document = document;
         this.phoneNumber = phoneNumber;
         this.birthDate = birthDate;
         this.email = email;
-        this.address = address;
+        this.city = city;
     }
     public String getName() {
         return this.name;
@@ -32,8 +32,8 @@ class User{
     public String getEmail() {
         return this.email;
     }
-    public String getAddress() {
-        return this.address;
+    public String getCity() {
+        return this.city;
     }
     public LocalDate getBirthDate() {
         return this.birthDate;
@@ -50,8 +50,8 @@ class User{
     public void setEmail(String email) {
         this.email = email;
     }
-    public void setAddress(String address) {
-        this.address = address;
+    public void setCity(String city) {
+        this.city = city;
     }
     public void setBirthDate(LocalDate birthDate) {
         this.birthDate = birthDate;
@@ -64,29 +64,35 @@ class User{
             logger.info("Nome: ");
             String userName = System.console().readLine();
 
-            logger.info("Documento: ");
+            logger.info("Documento[xxx.xxx.xxx-xx]: ");
             String userDocument = System.console().readLine();
 
-            logger.info("Telefone: ");
+            logger.info("Telefone[(xx)xxxxx-xxxx]: ");
             String userPhoneNumber = System.console().readLine();
 
             logger.info("Email: ");
             String userEmail = System.console().readLine();
 
-            logger.info("Endereço: ");
-            String userAddress = System.console().readLine();
+            logger.info("Cidade: ");
+            String userCity = System.console().readLine();
 
-            logger.info("Data de nascimento: ");
+            logger.info("Data de nascimento[aaaa-mm-dd]: ");
             LocalDate userBirthDate = LocalDate.parse(System.console().readLine());
 
-            return new User(userName, userDocument, userPhoneNumber, userBirthDate, userEmail, userAddress);
+            return new User(userName, userDocument, userPhoneNumber, userBirthDate, userEmail, userCity);
         }
         catch(Exception e){
             Logger logger = Logger.getLogger(User.class.getName());
             logger.info(e.getMessage());
-            logger.info("\nErro ao cadastrar usuario, por favor, tente novamente.\n");
-            createUser();
-            return null;
+            logger.info("\nErro ao cadastrar usuario, por favor digite 1 para tentar novamente, ou qualquer tecla para voltar.\n");
+            int option  = Integer.parseInt(System.console().readLine());
+            if (option == 1){
+                createUser();
+                return null;
+            }
+            else{
+                return null;
+            }
         }
         
     }

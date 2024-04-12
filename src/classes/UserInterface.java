@@ -1,4 +1,4 @@
-package src.appclasses;
+package src.classes;
 import java.util.logging.Logger;
 
 public class UserInterface {
@@ -42,6 +42,9 @@ public class UserInterface {
             else if (userOption == 1){
                 User newUser = User.createUser();
                 DataBase.insertUser(newUser);                
+            }
+            else if (userOption == 2){
+                DataBase.listQuery("users");
             }
             else if (userOption == 0) {
                 logger.info("\nRetornando ao menu principal.");
