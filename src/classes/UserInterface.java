@@ -22,9 +22,9 @@ public class UserInterface {
             else if (option == 1) {
                 userMenu();
             }
-            else if (option == 0){{
+            else if (option == 0){
                 logger.info("\nCerto, programa encerrando...");
-            }}
+            }
         }
     }
     public static void userMenu(){
@@ -41,15 +41,45 @@ public class UserInterface {
             }
             else if (userOption == 1){
                 User newUser = User.createUser();
-                DataBase.insertUser(newUser);                
+                User.insertUser(newUser);                
             }
             else if (userOption == 2){
-                DataBase.listQuery("users");
+                User.listUsers("");
+            }
+            else if (userOption == 3){
+                logger.info("\nDigite o documento do usuário que deseja buscar: ");
+                String userDocument = System.console().readLine();
+                User.listUsers(userDocument);
+            }
+            else if (userOption == 4){
+                logger.info("\nDigite o documento do usuário que deseja atualizar: ");
+                String userDocument = System.console().readLine();
+                User.listUsers(userDocument);
+                User updateUserData = User.createUser();
+                updateUserData.updateUser(updateUserData, userDocument);
+            }
+            else if (userOption == 5){
+                User.listUsers("");
+                logger.info("\nDigite o documento do usuário que deseja deletar: ");
+                String userDocument = System.console().readLine();
+                User.listUsers(userDocument);
+                logger.info("\nDigite 1 para confirmar a exclusão, ou qualquer outra tecla para retornar ao menu anterior: ");
+                int confirm = Integer.parseInt(System.console().readLine());
+                if (confirm == 1){
+                    User.deleteUser(userDocument);
+                }
+                else{
+                    logger.info("\nRetornando ao menu anterior.");
+                }
             }
             else if (userOption == 0) {
                 logger.info("\nRetornando ao menu principal.");
                 mainMenu();
             }
         }
+    }
+
+    public static void eventMenu(){
+        //TODO: Criar menu de eventos
     }
 }

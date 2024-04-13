@@ -1,5 +1,9 @@
 package src.classes;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.logging.Logger;
 
@@ -64,7 +68,7 @@ class User{
             logger.info("Nome: ");
             String userName = System.console().readLine();
 
-            logger.info("Documento[xxx.xxx.xxx-xx]: ");
+            logger.info("Documento[xxxxxxxxxxx]: ");
             String userDocument = System.console().readLine();
 
             logger.info("Telefone[(xx)xxxxx-xxxx]: ");
@@ -94,6 +98,94 @@ class User{
                 return null;
             }
         }
+    }
+    public static void insertUser(User user){
+        String newQuery = "INSERT INTO users (name, document, phoneNumber, email, city, birthDate) VALUES (?, ?, ?, ?, ?, ?);";
+        DataBase dataBase = new DataBase();
         
+        try(Connection connection = dataBase.getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(newQuery);){
+            preparedStatement.setString(1, user.getName());
+            preparedStatement.setString(2, user.getDocument());
+            preparedStatement.setString(3, user.getPhoneNumber());
+            preparedStatement.setString(4, user.getEmail());
+            preparedStatement.setString(5, user.getCity());
+            preparedStatement.setDate(6, java.sql.Date.valueOf(user.getBirthDate()));
+
+            preparedStatement.executeUpdate();
+            System.out.println("Usuario inserido com sucesso!");
+
+        } catch (SQLException e) {
+            System.out.println("Erro ao inserir o novo usuario: ");
+            e.printStackTrace();
+        }
+    }
+    public static void listUsers(String userDocument){
+        String newQuery;
+        if (userDocument == ""){
+            newQuery = "SELECT * FROM users;";
+        }
+        else{
+            newQuery = String.format("SELECT * FROM users WHERE document = %s;", userDocument);
+        }
+        DataBase dataBase = new DataBase();
+
+        try(Connection connection = dataBase.getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(newQuery);){
+            ResultSet results = preparedStatement.executeQuery();
+
+            while (results.next()) {
+                String name = results.getString("name");
+                String document = results.getString("document");
+                String phoneNumber = results.getString("phoneNumber");
+                String email = results.getString("email");
+                String city = results.getString("city");
+                LocalDate birthDate = results.getDate("birthDate").toLocalDate();
+                
+                System.out.println(String.format("Nome: %s, CPF: %s, Telefone: %s, Email: %s, Cidade: %s, Data de nascimento: %s",
+                name, document, phoneNumber, email, city, birthDate));
+            }
+        } catch (SQLException e) {
+            System.out.println("Erro ao listar os dados:");
+            e.printStackTrace();
+        }
+    }
+    public void updateUser(User user, String userDocument) {
+        String newQuery = "UPDATE users SET name = ?, document = ?, phoneNumber = ?, email = ?, city = ?, birthDate = ? WHERE document = ?;";
+        DataBase dataBase = new DataBase();
+
+        try(Connection connection = dataBase.getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(newQuery);){
+            preparedStatement.setString(1, user.getName());
+            preparedStatement.setString(2, user.getDocument());
+            preparedStatement.setString(3, user.getPhoneNumber());
+            preparedStatement.setString(4, user.getEmail());
+            preparedStatement.setString(5, user.getCity());
+            preparedStatement.setDate(6, java.sql.Date.valueOf(user.getBirthDate()));
+            preparedStatement.setString(7, userDocument);
+
+            preparedStatement.executeUpdate();
+            System.out.println("Usuario atualizado com sucesso!");
+            listUsers(user.document);
+        }
+        catch(SQLException e) {
+            System.out.println("Erro ao atualizar o usuario:");
+            e.printStackTrace();
+        }
+    }
+    public static void deleteUser(String userDocument) {
+        String newQuery = "DELETE FROM users WHERE document = ?;";
+        DataBase dataBase = new DataBase();
+
+        try(Connection connection = dataBase.getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(newQuery);){
+            preparedStatement.setString(1, userDocument);
+            preparedStatement.executeUpdate();
+            System.out.println("Usuario deletado com sucesso!");
+        }
+        catch(SQLException e) {
+            System.out.println("Erro ao deletar o usuario:");
+            e.printStackTrace();
+        }
     }
 }
