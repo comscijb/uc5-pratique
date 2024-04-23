@@ -13,7 +13,7 @@ public class UserInterface {
         logger.info("\nSeja bem vindo!\n");
         while (option != 0) {
             logger.info("Menu principal - Selecione uma opcao no menu abaixo:\n");
-            logger.info("\n1 - Acessar menu usuario\n2 - Acessar menu de eventos\n3 - Fazer login\n0 - Sair\n");
+            logger.info("\n1 - Acessar menu usuario\n2 - Acessar menu de eventos\n3 - Selecionar Usuário\n0 - Sair\n");
 
             option = Integer.parseInt(System.console().readLine());
             if (option != 0 && option != 1 && option != 2 && option != 3) {
@@ -21,6 +21,9 @@ public class UserInterface {
             }
             else if (option == 1) {
                 userMenu();
+            }
+            else if (option == 2) {
+                eventMenu();
             }
             else if (option == 0){
                 logger.info("\nCerto, programa encerrando...");
@@ -74,12 +77,28 @@ public class UserInterface {
             }
             else if (userOption == 0) {
                 logger.info("\nRetornando ao menu principal.");
-                mainMenu();
             }
         }
     }
 
     public static void eventMenu(){
-        //TODO: Criar menu de eventos
+        int eventOption = 1;
+        Logger logger = Logger.getLogger(UserInterface.class.getName());
+        logger.info("\nVoce esta no menu de eventos, selecione uma opção abaixo:\n");
+
+        while (eventOption != 0){
+            logger.info("\n1 - Cadastrar novo evento\n2 - Listar eventos\n3 - Buscar evento\n4 - Atualizar evento\n5 - Deletar evento\n0 - Sair\n");
+            eventOption = Integer.parseInt(System.console().readLine());
+            if (eventOption != 0 && eventOption != 1 && eventOption != 2 && eventOption != 3 && eventOption != 4 && eventOption != 5) {
+                logger.info("\nOpção inválida, tente novamente!");
+            }
+            else if (eventOption == 1){
+                Event newEvent = Event.createEvent();
+                Event.insertEvent(newEvent);
+            }
+            else if (eventOption == 0){
+                logger.info("\nRetornando ao menu principal.");
+            }
+        }
     }
 }
