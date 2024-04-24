@@ -2,7 +2,7 @@ package src.classes;
 import java.util.logging.Logger;
 
 public class UserInterface {
-    public static final String INVALID_OPTION = "Opção inválida, tente novamente!"; 
+    public static final String INVALID_OPTION = "Opcao invalida, tente novamente!"; 
     public static void main(String[] args) {
         mainMenu();
     }
@@ -14,7 +14,7 @@ public class UserInterface {
         logger.info("\nSeja bem vindo!\n");
         while (option != 0) {
             logger.info("Menu principal - Selecione uma opcao no menu abaixo:\n");
-            logger.info("\n1 - Acessar menu usuario\n2 - Acessar menu de eventos\n3 - Selecionar Usuário\n0 - Sair\n");
+            logger.info("\n1 - Acessar menu usuario\n2 - Acessar menu de eventos\n3 - Selecionar Usuario\n0 - Sair\n");
 
             option = Integer.parseInt(System.console().readLine());
             if (option != 0 && option != 1 && option != 2 && option != 3) {
@@ -25,6 +25,13 @@ public class UserInterface {
             }
             else if (option == 2) {
                 eventMenu();
+            }
+            else if (option == 3) {
+                User.listUsers("");
+                logger.info("Digite o documento do usuario que deseja selecionar:");
+                String userId = System.console().readLine();
+                User selectedUser = User.selectUser(userId);
+                selectedUserMenu(selectedUser);
             }
             else if (option == 0){
                 logger.info("\nCerto, programa encerrando...");
@@ -85,7 +92,7 @@ public class UserInterface {
     public static void eventMenu(){
         int eventOption = 1;
         Logger logger = Logger.getLogger(UserInterface.class.getName());
-        logger.info("\nVoce esta no menu de eventos, selecione uma opção abaixo:\n");
+        logger.info("\nVoce esta no menu de eventos, selecione uma opcao abaixo:\n");
 
         while (eventOption != 0){
             logger.info("\n1 - Cadastrar novo evento\n2 - Listar eventos\n3 - Buscar evento\n4 - Atualizar evento\n5 - Deletar evento\n0 - Sair\n");
@@ -112,8 +119,51 @@ public class UserInterface {
                 Event newEvent = Event.createEvent();
                 Event.updateEvent(eventId,newEvent);
             }
+            else if (eventOption == 5){
+                Event.listEvents("");
+                logger.info("\nDigite o nome do evento que deseja deletar: ");
+                int eventId = Integer.parseInt(System.console().readLine());
+                Event.findEventByID(eventId);
+                logger.info("\nDigite 1 para confirmar a exclusão, ou qualquer outra tecla para retornar ao menu anterior: ");
+                int confirm = Integer.parseInt(System.console().readLine());
+                if (confirm == 1){
+                    Event.deleteEvent(eventId);
+                }
+                else{
+                    logger.info("\nRetornando ao menu anterior.");
+                }
+            }
             else if (eventOption == 0){
                 logger.info("\nRetornando ao menu principal.");
+            }
+        }
+    }
+    public static void selectedUserMenu(User user){
+        int userOption = 1;
+        Logger logger = Logger.getLogger(UserInterface.class.getName());
+        logger.info(String.format("Seja bem vindo %s, selecione uma opcao abaixo:\n", user.getName()));
+
+        while (userOption != 0){
+            logger.info("\n1 - Listar eventos\n2 - Participar de evento\n3 - Cancelar participação em evento\n4 - Criar alerta");
+            logger.info("\n5 - Deletar alerta\n6 - Cancelar alerta\n0 - Sair\n");
+
+            userOption = Integer.parseInt(System.console().readLine());
+
+            if(userOption != 0 && userOption != 1 && userOption != 2 && userOption != 3 && userOption != 4 && userOption != 5 && userOption != 6){
+                logger.info("\n" + INVALID_OPTION);
+            }
+            else if (userOption == 1){
+                Event.listEvents("");
+            }
+            else if (userOption == 2){
+                Event.listEvents("");
+                logger.info("\nDigite o ID do evento que deseja participar: ");
+                int eventId = Integer.parseInt(System.console().readLine());
+                EventAttendance userAttendance = new EventAttendance(eventId, user.getDocument());
+                EventAttendance.insertEventAttendance(userAttendance);
+            }
+            else if (userOption == 3){
+                //TODO: criar função para listar os eventos que o usuário participa, depois função para cancelar participação
             }
         }
     }

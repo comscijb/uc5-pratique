@@ -193,4 +193,29 @@ class User{
             e.printStackTrace();
         }
     }
+    public static User selectUser(String userDocument) {
+        String newQuery = "SELECT * FROM users WHERE document = ?;";
+        DataBase dataBase = new DataBase();
+
+        try(Connection connection = dataBase.getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(newQuery);){
+            preparedStatement.setString(1, userDocument);
+            ResultSet results = preparedStatement.executeQuery();
+
+            String name = results.getString("name");
+            String document = results.getString("document");
+            String phoneNumber = results.getString("phoneNumber");
+            String email = results.getString("email");
+            String city = results.getString("city");
+            LocalDate birthDate = results.getDate("birthDate").toLocalDate();
+
+            User newUser = new User(name, document, phoneNumber, birthDate, email, city);
+            return newUser;
+        }
+        catch(SQLException e) {
+            System.out.println("Erro ao selecionar o usuario:");
+            e.printStackTrace();
+            return null;
+        }
+    }
 }

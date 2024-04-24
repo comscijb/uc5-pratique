@@ -173,19 +173,7 @@ class Event {
 
             ResultSet results = preparedStatement.executeQuery();
             
-            while (results.next()) {
-                String name = results.getString("eventName");
-                String category = results.getString("category");
-                LocalDate date = results.getDate("eventDate").toLocalDate();
-                LocalTime time = results.getTime("eventTime").toLocalTime();
-                String description = results.getString("eventDescription");
-                String address = results.getString("eventAddress");
-                int eventID = results.getInt("eventID");
-                
-                System.out.println(String.format("%nID: %s - Nome: %s --- Categoria: %s --- Data: %s - Hora: %s --- Endereço: %s",
-                eventID ,name, category, date, time, address));
-                System.out.println(String.format("%nDescrição: %n%s", description));
-            }
+            printData(results);
         }
         catch(SQLException e) {
             System.out.println("Erro ao listar os dados: ");
@@ -214,6 +202,58 @@ class Event {
         }
         catch(SQLException e) {
             System.out.println("Erro ao atualizar o evento: ");
+            e.printStackTrace();
+        }
+    }
+    public static void findEventByID(int eventID) {
+        String newQuery = "SELECT * FROM events_ WHERE eventID = ?;";
+        DataBase dataBase = new DataBase();
+
+        try(Connection connection = dataBase.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(newQuery)){
+
+            preparedStatement.setInt(1, eventID);
+
+            ResultSet results = preparedStatement.executeQuery();
+            printData(results);
+            }
+        catch(SQLException e) {
+            System.out.println("Erro ao encontrar o evento: ");
+            e.printStackTrace();
+        }
+            
+            
+    }
+    private static void printData(ResultSet results) throws SQLException {
+
+        while (results.next()) {
+            String name = results.getString("eventName");
+            String category = results.getString("category");
+            LocalDate date = results.getDate("eventDate").toLocalDate();
+            LocalTime time = results.getTime("eventTime").toLocalTime();
+            String description = results.getString("eventDescription");
+            String address = results.getString("eventAddress");
+            int eventID = results.getInt("eventID");
+            
+            System.out.println(String.format("%nID: %s - Nome: %s --- Categoria: %s --- Data: %s - Hora: %s --- Endereço: %s",
+            eventID ,name, category, date, time, address));
+            System.out.println(String.format("%nDescrição: %n%s", description));
+        }
+    }
+
+    public static void deleteEvent(int eventID) {
+        String newQuery = "DELETE FROM events_ WHERE eventID = ?;";
+        DataBase dataBase = new DataBase();
+
+        try(Connection connection = dataBase.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(newQuery)){
+
+            preparedStatement.setInt(1, eventID);
+            preparedStatement.executeUpdate();
+            System.out.println("Evento deletado com sucesso!");
+            }
+        catch(SQLException e) {
+            System.out.println("Erro ao deletar o evento: ");
             e.printStackTrace();
         }
     }
