@@ -122,16 +122,21 @@ class User{
     }
     public static void listUsers(String userDocument){
         String newQuery;
-        if (userDocument == ""){
+        if (userDocument.equals( "")){
             newQuery = "SELECT * FROM users;";
         }
         else{
-            newQuery = String.format("SELECT * FROM users WHERE document = %s;", userDocument);
+            newQuery = "SELECT * FROM users WHERE document LIKE ?;";
         }
         DataBase dataBase = new DataBase();
 
         try(Connection connection = dataBase.getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement(newQuery);){
+
+            if (!userDocument.isEmpty()){
+                preparedStatement.setString(1, "%" + userDocument + "%");
+            }
+
             ResultSet results = preparedStatement.executeQuery();
 
             while (results.next()) {

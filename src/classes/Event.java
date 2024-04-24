@@ -3,6 +3,8 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.logging.Logger;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 class Event {
@@ -134,6 +136,7 @@ class Event {
 
         try(Connection connection = dataBase.getConnection();
             java.sql.PreparedStatement preparedStatement = connection.prepareStatement(newQuery)){
+
             preparedStatement.setString(1, newEvent.getName());
             preparedStatement.setString(2, newEvent.getCategory());
             preparedStatement.setDate(3, java.sql.Date.valueOf(newEvent.getDate()));
@@ -148,6 +151,69 @@ class Event {
         }
         catch (SQLException e) {
             System.out.println("Erro ao inserir o novo evento: ");
+            e.printStackTrace();
+        }
+    }
+    public static void listEvents(String eventName) {
+        String newQuery;
+        if (eventName.equals("")) {
+            newQuery = "SELECT * FROM events_;";
+        }
+        else{
+            newQuery = "SELECT * FROM events_ WHERE eventName LIKE ?;";
+        }
+        DataBase dataBase = new DataBase();
+
+        try(Connection connection = dataBase.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(newQuery)){
+
+            if(!eventName.isEmpty()) {
+                preparedStatement.setString(1, "%" + eventName + "%");
+            }
+
+            ResultSet results = preparedStatement.executeQuery();
+            
+            while (results.next()) {
+                String name = results.getString("eventName");
+                String category = results.getString("category");
+                LocalDate date = results.getDate("eventDate").toLocalDate();
+                LocalTime time = results.getTime("eventTime").toLocalTime();
+                String description = results.getString("eventDescription");
+                String address = results.getString("eventAddress");
+                int eventID = results.getInt("eventID");
+                
+                System.out.println(String.format("%nID: %s - Nome: %s --- Categoria: %s --- Data: %s - Hora: %s --- Endereço: %s",
+                eventID ,name, category, date, time, address));
+                System.out.println(String.format("%nDescrição: %n%s", description));
+            }
+        }
+        catch(SQLException e) {
+            System.out.println("Erro ao listar os dados: ");
+            e.printStackTrace();
+        }
+    }
+    public static void updateEvent(int eventID, Event event) {
+        String newQuery = "UPDATE events_ SET eventName = ?, category = ?, eventDate = ?, eventTime = ?, eventDescription = ?, eventAddress = ?, isOngoing = ?, isFinished = ? WHERE eventID = ?;";
+        DataBase dataBase = new DataBase();
+
+        try(Connection connection = dataBase.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(newQuery)){
+
+            preparedStatement.setString(1, event.getName());
+            preparedStatement.setString(2, event.getCategory());
+            preparedStatement.setDate(3, java.sql.Date.valueOf(event.getDate()));
+            preparedStatement.setTime(4, java.sql.Time.valueOf(event.getTime()));
+            preparedStatement.setString(5, event.getDescription());
+            preparedStatement.setString(6, event.getAddress());
+            preparedStatement.setBoolean(7, event.getIsOngoing());
+            preparedStatement.setBoolean(8, event.getIsFinished());
+            preparedStatement.setInt(9, eventID);
+
+            preparedStatement.executeUpdate();
+            System.out.println("Evento atualizado com sucesso!");
+        }
+        catch(SQLException e) {
+            System.out.println("Erro ao atualizar o evento: ");
             e.printStackTrace();
         }
     }
