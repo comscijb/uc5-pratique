@@ -11,21 +11,28 @@ class Event {
     private String name;
     private int eventID;
     private String category;
-    private LocalDate date;
-    private LocalTime hora;
+    private LocalDate startDate;
+    private LocalTime startTime;
+    private LocalDate endDate;
+    private LocalTime endTime;
     private String description;
     private String address;
+    private String region;
+    
     private Boolean isOngoing = false;
     private Boolean isFinished = false;
     private static int nextID = 1;
     
-    public Event(String name, String category, LocalDate date, LocalTime hora, String description, String address) {
+    public Event(String name, String category, LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime, String description, String address, String region) {
         this.name = name;
         this.category = category;
-        this.date = date;
-        this.hora = hora;
+        this.startDate = startDate;
+        this.startTime = startTime;
+        this.endDate = endDate;
+        this.endTime = endTime;
         this.description = description;
         this.address = address;
+        this.region = region;
         this.eventID = nextID++;
     }
     public String getName() {
@@ -37,11 +44,17 @@ class Event {
     public int getEventID() {
         return this.eventID;
     }
-    public LocalDate getDate() {
-        return this.date;
+    public LocalDate getStartDate() {
+        return this.startDate;
     }
-    public LocalTime getTime() {
-        return this.hora;
+    public LocalTime getStartTime() {
+        return this.startTime;
+    }
+    public LocalDate getEndDate() {
+        return this.endDate;
+    }
+    public LocalTime getEndTime() {
+        return this.endTime;
     }
     public String getDescription() {
         return this.description;
@@ -69,17 +82,23 @@ class Event {
             return false;
         }
     }
+    public String getRegion() {
+        return region;
+    }
+    public void setRegion(String region) {
+        this.region = region;
+    }
     public void setName(String name) {
         this.name = name;
     }
     public void setCategory(String category) {
         this.category = category;
     }
-    public void setDate(LocalDate date) {
-        this.date = date;
+    public void setStartDate(LocalDate date) {
+        this.startDate = date;
     }
-    public void setTime(LocalTime hora) {
-        this.hora = hora;
+    public void setStartTime(LocalTime startTime) {
+        this.startTime = startTime;
     }
     public void setDescription(String description) {
         this.description = description;
@@ -93,6 +112,12 @@ class Event {
     public void setIsFinished(Boolean isFinished) {
         this.isFinished = isFinished;
     }
+    public void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
+    }
+    public void setEndTime(LocalTime endTime) {
+        this.endTime = endTime;
+    }
     public static Event createEvent(){
         Logger logger = Logger.getLogger(Event.class.getName());
         logger.info("Criando novo evento");
@@ -103,11 +128,17 @@ class Event {
             logger.info("Categoria: [esportivo, cultural, educacional, festival, outro] ");
             String category = System.console().readLine();
 
-            logger.info("Data [aaaa-mm-dd]: ");
-            LocalDate date = LocalDate.parse(System.console().readLine());
+            logger.info("Data de inicio[aaaa-mm-dd]: ");
+            LocalDate startDate = LocalDate.parse(System.console().readLine());
 
-            logger.info("Horario [hh:mm]: ");
-            LocalTime hora = LocalTime.parse(System.console().readLine());
+            logger.info("Horario de inicio[hh:mm]: ");
+            LocalTime startTime = LocalTime.parse(System.console().readLine());
+
+            logger.info("Data de termino[aaaa-mm-dd]: ");
+            LocalDate endDate = LocalDate.parse(System.console().readLine());
+
+            logger.info("Horario de termino[hh:mm]: ");
+            LocalTime endTime = LocalTime.parse(System.console().readLine());
 
             logger.info("Descricão: ");
             String description = System.console().readLine();
@@ -115,8 +146,10 @@ class Event {
             logger.info("Endereço: ");
             String address = System.console().readLine();
 
-            Event newEvent = new Event(name, category, date, hora, description, address);
-            return newEvent;
+            logger.info("Região[LL]: ");
+            String region = System.console().readLine();
+
+            return new Event(name, category, startDate, startTime, endDate, endTime, description, address, region);
         }
         catch(Exception e){
             logger.info(e.toString());
@@ -131,7 +164,7 @@ class Event {
         }
     }
     public static void insertEvent(Event newEvent) {
-        String newQuery = "INSERT INTO events_ (eventName, category, eventDate, eventTime, eventDescription, eventAddress, isOngoing, isFinished) VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
+        String newQuery = "INSERT INTO events_ (eventName, category, startDate, startTime, endDate, endTime, eventDescription, eventAddress, region, isOngoing, isFinished) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
         DataBase dataBase = new DataBase();
 
         try(Connection connection = dataBase.getConnection();
@@ -139,12 +172,15 @@ class Event {
 
             preparedStatement.setString(1, newEvent.getName());
             preparedStatement.setString(2, newEvent.getCategory());
-            preparedStatement.setDate(3, java.sql.Date.valueOf(newEvent.getDate()));
-            preparedStatement.setTime(4, java.sql.Time.valueOf(newEvent.getTime()));
-            preparedStatement.setString(5, newEvent.getDescription());
-            preparedStatement.setString(6, newEvent.getAddress());
-            preparedStatement.setBoolean(7, newEvent.getIsOngoing());
-            preparedStatement.setBoolean(8, newEvent.getIsFinished());
+            preparedStatement.setDate(3, java.sql.Date.valueOf(newEvent.getStartDate()));
+            preparedStatement.setTime(4, java.sql.Time.valueOf(newEvent.getStartTime()));
+            preparedStatement.setDate(5, java.sql.Date.valueOf(newEvent.getEndDate()));
+            preparedStatement.setTime(6, java.sql.Time.valueOf(newEvent.getEndTime()));
+            preparedStatement.setString(7, newEvent.getDescription());
+            preparedStatement.setString(8, newEvent.getAddress());
+            preparedStatement.setString(9, newEvent.getRegion());
+            preparedStatement.setBoolean(10, newEvent.getIsOngoing());
+            preparedStatement.setBoolean(11, newEvent.getIsFinished());
 
             preparedStatement.executeUpdate();
             System.out.println("Evento inserido com sucesso!");
@@ -154,13 +190,16 @@ class Event {
             e.printStackTrace();
         }
     }
-    public static void listEvents(String eventName) {
+    public static void listEvents(String eventName, String region) {
         String newQuery;
-        if (eventName.equals("")) {
-            newQuery = "SELECT * FROM events_;";
+        if (region.equals("") && !eventName.equals("")) {
+            newQuery = "SELECT * FROM events_ WHERE eventName LIKE ?;";
+        }
+        else if (eventName.equals("") && !region.equals("")) {
+            newQuery = "SELECT * FROM events_ WHERE region = ?;";
         }
         else{
-            newQuery = "SELECT * FROM events_ WHERE eventName LIKE ?;";
+            newQuery = "SELECT * FROM events_;";
         }
         DataBase dataBase = new DataBase();
 
@@ -180,22 +219,25 @@ class Event {
             e.printStackTrace();
         }
     }
-    public static void updateEvent(int eventID, Event event) {
-        String newQuery = "UPDATE events_ SET eventName = ?, category = ?, eventDate = ?, eventTime = ?, eventDescription = ?, eventAddress = ?, isOngoing = ?, isFinished = ? WHERE eventID = ?;";
+    public static void updateEvent(int eventID, Event newEvent) {
+        String newQuery = "UPDATE events_ SET eventName = ?, category = ?, startDate = ?, startTime = ?, endDate = ?, endTime = ?, eventDescription = ?, eventAddress = ?, region = ?, isOngoing = ?, isFinished = ? WHERE eventID = ?;";
         DataBase dataBase = new DataBase();
 
         try(Connection connection = dataBase.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(newQuery)){
 
-            preparedStatement.setString(1, event.getName());
-            preparedStatement.setString(2, event.getCategory());
-            preparedStatement.setDate(3, java.sql.Date.valueOf(event.getDate()));
-            preparedStatement.setTime(4, java.sql.Time.valueOf(event.getTime()));
-            preparedStatement.setString(5, event.getDescription());
-            preparedStatement.setString(6, event.getAddress());
-            preparedStatement.setBoolean(7, event.getIsOngoing());
-            preparedStatement.setBoolean(8, event.getIsFinished());
-            preparedStatement.setInt(9, eventID);
+                preparedStatement.setString(1, newEvent.getName());
+                preparedStatement.setString(2, newEvent.getCategory());
+                preparedStatement.setDate(3, java.sql.Date.valueOf(newEvent.getStartDate()));
+                preparedStatement.setTime(4, java.sql.Time.valueOf(newEvent.getStartTime()));
+                preparedStatement.setDate(5, java.sql.Date.valueOf(newEvent.getEndDate()));
+                preparedStatement.setTime(6, java.sql.Time.valueOf(newEvent.getEndTime()));
+                preparedStatement.setString(7, newEvent.getDescription());
+                preparedStatement.setString(8, newEvent.getAddress());
+                preparedStatement.setString(9, newEvent.getRegion());
+                preparedStatement.setBoolean(10, newEvent.getIsOngoing());
+                preparedStatement.setBoolean(11, newEvent.getIsFinished());
+                preparedStatement.setInt(12, eventID);
 
             preparedStatement.executeUpdate();
             System.out.println("Evento atualizado com sucesso!");
@@ -233,10 +275,11 @@ class Event {
             LocalTime time = results.getTime("eventTime").toLocalTime();
             String description = results.getString("eventDescription");
             String address = results.getString("eventAddress");
+            String region = results.getString("region");
             int eventID = results.getInt("eventID");
             
-            System.out.println(String.format("%nID: %s - Nome: %s --- Categoria: %s --- Data: %s - Hora: %s --- Endereço: %s",
-            eventID ,name, category, date, time, address));
+            System.out.println(String.format("%nID: %s - Nome: %s --- Categoria: %s --- Data: %s - Hora: %s --- Endereço: %s --- Regiao: %s",
+            eventID ,name, category, date, time, address, region));
             System.out.println(String.format("%nDescrição: %n%s", description));
         }
     }

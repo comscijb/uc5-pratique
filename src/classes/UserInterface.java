@@ -105,22 +105,22 @@ public class UserInterface {
                 Event.insertEvent(newEvent);
             }
             else if (eventOption == 2){
-                Event.listEvents("");
+                Event.listEvents("", "");
             }
             else if (eventOption == 3){
                 logger.info("\nDigite o nome do evento que deseja buscar: ");
                 String eventName = System.console().readLine();
-                Event.listEvents(eventName);
+                Event.listEvents(eventName, "");
             }
             else if (eventOption == 4){
-                Event.listEvents("");
+                Event.listEvents("", "");
                 logger.info("\nDigite o ID do evento que deseja atualizar: ");
                 int eventId = Integer.parseInt(System.console().readLine());
                 Event newEvent = Event.createEvent();
                 Event.updateEvent(eventId,newEvent);
             }
             else if (eventOption == 5){
-                Event.listEvents("");
+                Event.listEvents("","");
                 logger.info("\nDigite o nome do evento que deseja deletar: ");
                 int eventId = Integer.parseInt(System.console().readLine());
                 Event.findEventByID(eventId);
@@ -153,10 +153,10 @@ public class UserInterface {
                 logger.info("\n" + INVALID_OPTION);
             }
             else if (userOption == 1){
-                Event.listEvents("");
+                Event.listEvents("",user.getRegion());
             }
             else if (userOption == 2){
-                Event.listEvents("");
+                Event.listEvents("", user.getRegion());
                 logger.info("\nDigite o ID do evento que deseja participar: ");
                 int eventId = Integer.parseInt(System.console().readLine());
                 EventAttendance userAttendance = new EventAttendance(eventId, user.getDocument());

@@ -13,16 +13,19 @@ class User{
     private String phoneNumber;
     private String email = "";
     private String city = "";
+    private String region;
     private LocalDate birthDate;
 
     public User(String name, String document, String phoneNumber,
-     LocalDate birthDate, String email, String city) {
+     LocalDate birthDate, String email, String city, String region) {
         this.name = name;
         this.document = document;
         this.phoneNumber = phoneNumber;
         this.birthDate = birthDate;
         this.email = email;
         this.city = city;
+        this.region = region;
+
     }
     public String getName() {
         return this.name;
@@ -41,6 +44,12 @@ class User{
     }
     public LocalDate getBirthDate() {
         return this.birthDate;
+    }
+    public String getRegion() {
+        return region;
+    }
+    public void setRegion(String region) {
+        this.region = region;
     }
     public void setName(String name) {
         this.name = name;
@@ -83,7 +92,10 @@ class User{
             logger.info("Data de nascimento[aaaa-mm-dd]: ");
             LocalDate userBirthDate = LocalDate.parse(System.console().readLine());
 
-            return new User(userName, userDocument, userPhoneNumber, userBirthDate, userEmail, userCity);
+            logger.info("Regiao[LL]: ");
+            String userRegion = System.console().readLine();
+
+            return new User(userName, userDocument, userPhoneNumber, userBirthDate, userEmail, userCity, userRegion);
         }
         catch(Exception e){
             Logger logger = Logger.getLogger(User.class.getName());
@@ -100,7 +112,7 @@ class User{
         }
     }
     public static void insertUser(User user){
-        String newQuery = "INSERT INTO users (name, document, phoneNumber, email, city, birthDate) VALUES (?, ?, ?, ?, ?, ?);";
+        String newQuery = "INSERT INTO users (name, document, phoneNumber, email, city, region, birthDate) VALUES (?, ?, ?, ?, ?, ?, ?);";
         DataBase dataBase = new DataBase();
         
         try(Connection connection = dataBase.getConnection();
@@ -110,7 +122,8 @@ class User{
             preparedStatement.setString(3, user.getPhoneNumber());
             preparedStatement.setString(4, user.getEmail());
             preparedStatement.setString(5, user.getCity());
-            preparedStatement.setDate(6, java.sql.Date.valueOf(user.getBirthDate()));
+            preparedStatement.setString(6, user.getRegion());
+            preparedStatement.setDate(7, java.sql.Date.valueOf(user.getBirthDate()));
 
             preparedStatement.executeUpdate();
             System.out.println("Usuario inserido com sucesso!");
@@ -145,10 +158,11 @@ class User{
                 String phoneNumber = results.getString("phoneNumber");
                 String email = results.getString("email");
                 String city = results.getString("city");
+                String region = results.getString("region");
                 LocalDate birthDate = results.getDate("birthDate").toLocalDate();
                 
-                System.out.println(String.format("Nome: %s, CPF: %s, Telefone: %s, Email: %s, Cidade: %s, Data de nascimento: %s",
-                name, document, phoneNumber, email, city, birthDate));
+                System.out.println(String.format("Nome: %s, CPF: %s, Telefone: %s, Email: %s, Cidade: %s, Região: %s, Data de nascimento: %s",
+                name, document, phoneNumber, email, city, region, birthDate));
             }
         } catch (SQLException e) {
             System.out.println("Erro ao listar os dados:");
@@ -156,7 +170,7 @@ class User{
         }
     }
     public void updateUser(User user, String userDocument) {
-        String newQuery = "UPDATE users SET name = ?, document = ?, phoneNumber = ?, email = ?, city = ?, birthDate = ? WHERE document = ?;";
+        String newQuery = "UPDATE users SET name = ?, document = ?, phoneNumber = ?, email = ?, city = ?, region = ?, birthDate = ? WHERE document = ?;";
         DataBase dataBase = new DataBase();
 
         try(Connection connection = dataBase.getConnection();
@@ -166,8 +180,9 @@ class User{
             preparedStatement.setString(3, user.getPhoneNumber());
             preparedStatement.setString(4, user.getEmail());
             preparedStatement.setString(5, user.getCity());
-            preparedStatement.setDate(6, java.sql.Date.valueOf(user.getBirthDate()));
-            preparedStatement.setString(7, userDocument);
+            preparedStatement.setString(6, user.getRegion());
+            preparedStatement.setDate(7, java.sql.Date.valueOf(user.getBirthDate()));
+            preparedStatement.setString(8, userDocument);
 
             preparedStatement.executeUpdate();
             System.out.println("Usuario atualizado com sucesso!");
@@ -207,10 +222,10 @@ class User{
             String phoneNumber = results.getString("phoneNumber");
             String email = results.getString("email");
             String city = results.getString("city");
+            String region = results.getString("region");
             LocalDate birthDate = results.getDate("birthDate").toLocalDate();
 
-            User newUser = new User(name, document, phoneNumber, birthDate, email, city);
-            return newUser;
+            return new User(name, document, phoneNumber, birthDate, email, city, region);
         }
         catch(SQLException e) {
             System.out.println("Erro ao selecionar o usuario:");
