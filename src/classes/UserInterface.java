@@ -164,6 +164,13 @@ public class UserInterface {
             }
             else if (userOption == 3){
                 //TODO: criar função para listar os eventos que o usuário participa, depois função para cancelar participação
+                EventAttendance.listEventAttendance(user.getDocument());
+                logger.info("Digite o ID do evento que deseja cancelar a participação: ");
+                int eventId = Integer.parseInt(System.console().readLine());
+                EventAttendance.deleteEventAttendance(eventId, user.getDocument());
+            }
+            else if (userOption == 4){
+                //TODO: criar função para criar alerta
             }
         }
     }

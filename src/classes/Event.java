@@ -201,6 +201,7 @@ class Event {
         else{
             newQuery = "SELECT * FROM events_;";
         }
+        System.out.println(newQuery);
         DataBase dataBase = new DataBase();
 
         try(Connection connection = dataBase.getConnection();
@@ -208,6 +209,9 @@ class Event {
 
             if(!eventName.isEmpty()) {
                 preparedStatement.setString(1, "%" + eventName + "%");
+            }
+            else if (!region.isEmpty()) {
+                preparedStatement.setString(1, region);
             }
 
             ResultSet results = preparedStatement.executeQuery();
@@ -271,15 +275,15 @@ class Event {
         while (results.next()) {
             String name = results.getString("eventName");
             String category = results.getString("category");
-            LocalDate date = results.getDate("eventDate").toLocalDate();
-            LocalTime time = results.getTime("eventTime").toLocalTime();
+            LocalDate startDate = results.getDate("startDate").toLocalDate();
+            LocalTime startTime = results.getTime("startTime").toLocalTime();
             String description = results.getString("eventDescription");
             String address = results.getString("eventAddress");
             String region = results.getString("region");
             int eventID = results.getInt("eventID");
             
             System.out.println(String.format("%nID: %s - Nome: %s --- Categoria: %s --- Data: %s - Hora: %s --- Endereço: %s --- Regiao: %s",
-            eventID ,name, category, date, time, address, region));
+            eventID ,name, category, startDate, startTime, address, region));
             System.out.println(String.format("%nDescrição: %n%s", description));
         }
     }

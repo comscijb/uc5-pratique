@@ -11,12 +11,9 @@ public class EventAttendance {
     private int eventID;
     private String userDocument;
 
-    private static int nextID = 1;
-
     public EventAttendance(int eventID, String userDocument) {
         this.eventID = eventID;
         this.userDocument = userDocument;
-        this.eventAttendanceID = nextID++;
     }
 
     public int getEventID() {
@@ -40,21 +37,77 @@ public class EventAttendance {
     }
 
     public static void insertEventAttendance(EventAttendance eventAttendance) {
-        String newQuery = "INSERT INTO eventAttendance VALUES (?, ?, ?);";
+        String checkQuery = "SELECT COUNT(*) FROM eventAttendance WHERE eventID = ? AND userDocument = ?;";
+        String insertQuery = "INSERT INTO eventAttendance (eventID, userDocument) VALUES (?, ?);";
+        DataBase dataBase = new DataBase();
+
+        try(Connection connection = dataBase.getConnection();
+            PreparedStatement checkStatement = connection.prepareStatement(checkQuery)) {
+
+            checkStatement.setInt(1, eventAttendance.getEventID());
+            checkStatement.setString(2, eventAttendance.getUserDocument());
+
+            try(ResultSet results = checkStatement.executeQuery()) {
+                if(results.getInt(1) == 0) {
+
+                    try(PreparedStatement insertStatement = connection.prepareStatement(insertQuery)) {
+
+                        insertStatement.setInt(1, eventAttendance.getEventID());
+                        insertStatement.setString(2, eventAttendance.getUserDocument());
+
+                        insertStatement.executeUpdate();
+                    System.out.println("Participacao confirmada no evento!");
+                }
+            }
+
+                else {
+                    System.out.println("Participacao ja confirmada no evento!");
+                }
+            }
+        }
+
+        catch(SQLException e) {
+            System.out.println("Erro ao confirmar participacao no evento: ");
+            e.printStackTrace();
+        }
+    }
+    public static void listEventAttendance(String userID) {
+        String newQuery = "SELECT * FROM eventAttendance WHERE userDocument = ?;";
         DataBase dataBase = new DataBase();
 
         try(Connection connection = dataBase.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(newQuery)) {
 
-            preparedStatement.setInt(1, eventAttendance.getEventAttendanceID());
-            preparedStatement.setInt(2, eventAttendance.getEventID());
-            preparedStatement.setString(3, eventAttendance.getUserDocument());
+            preparedStatement.setString(1, userID);
+
+            ResultSet results = preparedStatement.executeQuery();
+
+            while (results.next()) {
+                String eventIDString = results.getString("eventID");
+                int eventID = Integer.parseInt(eventIDString);
+                Event.findEventByID(eventID);
+            }
+        }
+        catch(SQLException e) {
+            System.out.println("Erro ao buscar eventos: ");
+            e.printStackTrace();
+        }
+    }
+    public static void deleteEventAttendance(int eventID, String userDocument) {
+        String newQuery = "DELETE FROM eventAttendance WHERE eventID = ? AND userDocument = ?;";
+        DataBase dataBase = new DataBase();
+
+        try(Connection connection = dataBase.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(newQuery)) {
+
+            preparedStatement.setInt(1, eventID);
+            preparedStatement.setString(2, userDocument);
 
             preparedStatement.executeUpdate();
-            System.out.println("Participacao confirmada no evento!");
+            System.out.println("Participacao cancelada com sucesso!");
             }
         catch(SQLException e) {
-            System.out.println("Erro ao confirmar participacao no evento: ");
+            System.out.println("Erro ao cancelar participacao do evento: ");
             e.printStackTrace();
         }
     }
