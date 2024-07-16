@@ -1,6 +1,9 @@
 package src.classes;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -301,6 +304,83 @@ class Event {
             }
         catch(SQLException e) {
             System.out.println("Erro ao deletar o evento: ");
+            e.printStackTrace();
+        }
+    }
+
+    public static Event selectEvent(int eventID) {
+        String newQuery = "SELECT * FROM events_ WHERE eventID = ?;";
+        DataBase dataBase = new DataBase();
+
+        try(Connection connection = dataBase.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(newQuery)){
+            preparedStatement.setInt(1, eventID);
+            ResultSet results = preparedStatement.executeQuery();
+            
+            String name = results.getString("eventName");
+            String category = results.getString("category");
+            LocalDate startDate = results.getDate("startDate").toLocalDate();
+            LocalTime startTime = results.getTime("startTime").toLocalTime();
+            LocalDate endDate = results.getDate("endDate").toLocalDate();
+            LocalTime endTime = results.getTime("endTime").toLocalTime();
+            String description = results.getString("eventDescription");
+            String address = results.getString("eventAddress");
+            String region = results.getString("region");
+
+            Event event = new Event(name, category, startDate, startTime, endDate, endTime, description, address, region);
+            return event;
+            }
+        catch(SQLException e) {
+            System.out.println("Erro ao encontrar o evento: ");
+            e.printStackTrace();
+            return null;
+        }
+    }
+    public static void verifyEvents() {
+        String newQuery = "SELECT * FROM events_ WHERE isFinished = 0;";
+        DataBase dataBase = new DataBase();
+
+        try(Connection connection = dataBase.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(newQuery)){
+            ResultSet results = preparedStatement.executeQuery();
+
+
+            while (results.next()) {
+                int eventID = results.getInt("eventID");
+                Event event = Event.selectEvent(eventID);
+
+                List<Event> events = new ArrayList<>();
+                events.add(event);
+                
+                LocalDateTime now = LocalDateTime.now();
+
+                for (Event e : events) {
+                    LocalDateTime eventEndDateTime = e.getEndDate().atTime(e.getEndTime());
+                    if (now.isAfter(eventEndDateTime)) {
+                        e.finishEvent(eventID);
+                    }
+                }
+            };
+        }
+        catch(SQLException e) {
+            System.out.println("Erro ao verificar os eventos: ");
+            e.printStackTrace();
+        }
+    }
+    public void finishEvent(int eventID) {
+        String newQuery = "UPDATE events_ SET isFinished = 1 WHERE eventID = ?;";
+        DataBase dataBase = new DataBase();
+
+        try(Connection connection = dataBase.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(newQuery)){
+
+            preparedStatement.setInt(1, eventID);
+            preparedStatement.executeUpdate();
+            System.out.println("Evento finalizado com sucesso!");
+
+            }
+        catch(SQLException e) {
+            System.out.println("Erro ao finalizar o evento: ");
             e.printStackTrace();
         }
     }

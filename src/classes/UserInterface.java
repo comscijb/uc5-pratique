@@ -1,5 +1,8 @@
 package src.classes;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.logging.Logger;
+
 
 public class UserInterface {
     public static final String INVALID_OPTION = "Opcao invalida, tente novamente!"; 
@@ -13,6 +16,9 @@ public class UserInterface {
 
         logger.info("\nSeja bem vindo!\n");
         while (option != 0) {
+            
+            Event.verifyEvents();
+
             logger.info("Menu principal - Selecione uma opcao no menu abaixo:\n");
             logger.info("\n1 - Acessar menu usuario\n2 - Acessar menu de eventos\n3 - Selecionar Usuario\n0 - Sair\n");
 
@@ -163,7 +169,6 @@ public class UserInterface {
                 EventAttendance.insertEventAttendance(userAttendance);
             }
             else if (userOption == 3){
-                //TODO: criar função para listar os eventos que o usuário participa, depois função para cancelar participação
                 EventAttendance.listEventAttendance(user.getDocument());
                 logger.info("Digite o ID do evento que deseja cancelar a participação: ");
                 int eventId = Integer.parseInt(System.console().readLine());
@@ -171,6 +176,18 @@ public class UserInterface {
             }
             else if (userOption == 4){
                 //TODO: criar função para criar alerta
+                EventAttendance.listEventAttendance(user.getDocument());
+                logger.info("Digite o ID do evento para o qual deseja criar alerta: ");
+                int eventId = Integer.parseInt(System.console().readLine());
+                logger.info("Digite quantas horas antes do evento deve soar o alerta: ");
+                int userTime = Integer.parseInt(System.console().readLine());
+
+                Event event = Event.selectEvent(eventId);
+                LocalTime alertTime = event.getStartTime().minusHours(userTime);
+                LocalDate alertDate = event.getStartDate();
+
+                Alert newAlert = new Alert(user.getDocument(), eventId, alertDate.atTime(alertTime));
+
             }
         }
     }
