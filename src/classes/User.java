@@ -132,6 +132,7 @@ class User{
             System.out.println("Erro ao inserir o novo usuario: ");
             e.printStackTrace();
         }
+        dataBase.closeConnection();
     }
     public static void listUsers(String userDocument){
         String newQuery;
@@ -168,6 +169,7 @@ class User{
             System.out.println("Erro ao listar os dados:");
             e.printStackTrace();
         }
+        dataBase.closeConnection();
     }
     public void updateUser(User user, String userDocument) {
         String newQuery = "UPDATE users SET name = ?, document = ?, phoneNumber = ?, email = ?, city = ?, region = ?, birthDate = ? WHERE document = ?;";
@@ -192,6 +194,7 @@ class User{
             System.out.println("Erro ao atualizar o usuario:");
             e.printStackTrace();
         }
+        dataBase.closeConnection();
     }
     public static void deleteUser(String userDocument) {
         String newQuery = "DELETE FROM users WHERE document = ?;";
@@ -224,12 +227,14 @@ class User{
             String city = results.getString("city");
             String region = results.getString("region");
             LocalDate birthDate = results.getDate("birthDate").toLocalDate();
-
+            dataBase.closeConnection();
             return new User(name, document, phoneNumber, birthDate, email, city, region);
+            
         }
         catch(SQLException e) {
             System.out.println("Erro ao selecionar o usuario:");
             e.printStackTrace();
+            dataBase.closeConnection();
             return null;
         }
     }

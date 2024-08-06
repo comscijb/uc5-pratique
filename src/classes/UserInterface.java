@@ -165,8 +165,14 @@ public class UserInterface {
                 Event.listEvents("", user.getRegion());
                 logger.info("\nDigite o ID do evento que deseja participar: ");
                 int eventId = Integer.parseInt(System.console().readLine());
-                EventAttendance userAttendance = new EventAttendance(eventId, user.getDocument());
-                EventAttendance.insertEventAttendance(userAttendance);
+                Event event = Event.selectEvent(eventId);
+                if (event.getIsFinished()){
+                    logger.info("O evento selecionado já foi finalizado!");
+                }
+                else{
+                    EventAttendance userAttendance = new EventAttendance(eventId, user.getDocument());
+                    EventAttendance.insertEventAttendance(userAttendance);
+                }
             }
             else if (userOption == 3){
                 EventAttendance.listEventAttendance(user.getDocument());

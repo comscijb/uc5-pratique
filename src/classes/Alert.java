@@ -58,5 +58,6 @@ public class Alert {
             System.out.println("Erro ao criar o alerta: ");
             e.printStackTrace();
         }
+        dataBase.closeConnection();
     }  
 }

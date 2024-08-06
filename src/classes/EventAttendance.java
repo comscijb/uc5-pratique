@@ -70,6 +70,7 @@ public class EventAttendance {
             System.out.println("Erro ao confirmar participacao no evento: ");
             e.printStackTrace();
         }
+        dataBase.closeConnection();
     }
     public static void listEventAttendance(String userID) {
         String newQuery = "SELECT * FROM eventAttendance WHERE userDocument = ?;";
@@ -92,6 +93,7 @@ public class EventAttendance {
             System.out.println("Erro ao buscar eventos: ");
             e.printStackTrace();
         }
+        dataBase.closeConnection();
     }
     public static void deleteEventAttendance(int eventID, String userDocument) {
         String newQuery = "DELETE FROM eventAttendance WHERE eventID = ? AND userDocument = ?;";
@@ -110,5 +112,6 @@ public class EventAttendance {
             System.out.println("Erro ao cancelar participacao do evento: ");
             e.printStackTrace();
         }
+        dataBase.closeConnection();
     }
 }
